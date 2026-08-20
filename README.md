@@ -1,9 +1,17 @@
 # barangay-system
 
+<style>
+  .img-con{
+    display: flex;
+    gap: 15px;
+    width: 100%;
+  }
+</style>
 The goal of the e-barangay system is to improve the efficiency and accessibility of barangay services. Traditional processes in the barangay often involve manual record-keeping, delayed transactions, and limited communication between officials and residents. To tackle these problems, the proponents created a web-based platform to simplify operations and improve service delivery.
-
+<div="img-con">
 <img src="vendor/brgy.png" width="500" height="300">
 <img src="vendor/brgy2.png" width="500" height="300">
+</div>
 <br>Modules:
 <br> Certificate/Service Requests
 <br> Official/Resident Management
