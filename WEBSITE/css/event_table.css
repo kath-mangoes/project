@@ -1,0 +1,60 @@
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.event-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.event-table th, .event-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.event-table thead {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 600;
+}
+
+.event-table tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+.event-img {
+    width: 100%;
+    max-width: 100px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.read-more {
+    color: #0d6efd;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.read-more:hover {
+    color: #084298;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .event-table th, .event-table td {
+        font-size: 14px;
+    }
+
+    .event-img {
+        height: 50px;
+    }
+}

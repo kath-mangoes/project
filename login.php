@@ -1,0 +1,322 @@
+<?php
+
+include 'connection/config.php';
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
+if (!empty($error)) {
+    foreach ($error as $err) {
+        echo '<div class="alert alert-danger">' . $err . '</div>';
+    }
+}
+
+function generateRememberToken()
+{
+    return bin2hex(random_bytes(16)); // Generates a 32-character hexadecimal token
+}
+
+function logActivity($user_id, $role, $activity)
+{
+    global $conn;
+    $sql = "INSERT INTO tbl_audit (user_id, role, details) VALUES (?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("iss", $user_id, $role, $activity);
+    $stmt->execute();
+}
+
+$error = array();
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $pass = $_POST['password'];
+    $remember = isset($_POST['remember']) ? true : false;
+
+    $select = "SELECT * FROM tbl_user WHERE email = ?";
+    $stmt = $conn->prepare($select);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+
+        // Check if account is active, but auto-activate admin accounts
+        if ($row['account_status'] != 'Active') {
+            if ($row['role'] == 'admin') {
+                // Auto-activate the admin
+                $activateAdmin = "UPDATE tbl_user SET account_status = 'Active' WHERE user_id = ?";
+                $stmtActivate = $conn->prepare($activateAdmin);
+                $stmtActivate->bind_param("i", $row['user_id']);
+                $stmtActivate->execute();
+                $row['account_status'] = 'Active'; // Update locally
+            } else {
+                $error[] = "Your account is still in Pending. Please contact the administrator.";
+            }
+        }
+
+        if (empty($error) && password_verify($pass, $row['password'])) {
+            $_SESSION['user_id'] = $row['user_id'];
+            $_SESSION['email'] = $row['email'];
+            $_SESSION['image'] = $row['image'];
+            $_SESSION['full_name'] = $row['first_name'] . ' ' . $row['last_name'];
+            $_SESSION['is_logged_in'] = 1;
+            $_SESSION['role'] = $row['role'];
+
+            logActivity($_SESSION['user_id'], $_SESSION['role'], 'Logged in');
+
+            // Update is_logged_in status and time
+            $updateStatus = "UPDATE tbl_user SET is_logged_in = 1, is_logged_in_time = NOW() WHERE user_id = ?";
+            $stmtUpdate = $conn->prepare($updateStatus);
+            $stmtUpdate->bind_param("i", $row['user_id']);
+            $stmtUpdate->execute();
+
+            // Handle "Remember Me" functionality
+            if ($remember) {
+                $token = generateRememberToken();
+                $updateToken = "UPDATE tbl_user SET remember_token = ? WHERE user_id = ?";
+                $stmtToken = $conn->prepare($updateToken);
+                $stmtToken->bind_param("si", $token, $row['user_id']);
+                $stmtToken->execute();
+
+                // Set cookies
+                setcookie('remember_user', $row['email'], time() + (30 * 24 * 60 * 60), '/'); // 30 days
+                setcookie('remember_token', $token, time() + (30 * 24 * 60 * 60), '/');
+            }
+
+            // Redirect based on role
+            switch ($row['role']) {
+                case 'admin':
+                    header('Location: admin/index.php');
+                    break;
+                case 'barangay_official':
+                    header('Location: barangay-official/index.php');
+                    break;
+                case 'Resident':
+                    header('Location: resident/index.php');
+                    break;
+                default:
+                    $error[] = "Invalid user type!";
+                    break;
+            }
+
+            if (empty($error)) {
+                exit();
+            }
+        } else {
+            $error[] = "Incorrect email or password!";
+        }
+    } else {
+        $error[] = "Incorrect email or password!";
+    }
+} else {
+    // Check for "Remember Me" cookie
+    if (isset($_COOKIE['remember_user']) && isset($_COOKIE['remember_token'])) {
+        $email = mysqli_real_escape_string($conn, $_COOKIE['remember_user']);
+        $token = mysqli_real_escape_string($conn, $_COOKIE['remember_token']);
+
+        $select = "SELECT * FROM tbl_user WHERE email = ? AND remember_token = ?";
+        $stmt = $conn->prepare($select);
+        $stmt->bind_param("ss", $email, $token);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+
+            // Check if account is active for remember me login too
+            if ($row['account_status'] != 'Active') {
+                // Clear cookies if account is not active
+                setcookie('remember_user', '', time() - 3600, '/');
+                setcookie('remember_token', '', time() - 3600, '/');
+                $error[] = "Your account is not active. Please contact the administrator.";
+            } else {
+                $_SESSION['user_id'] = $row['user_id'];
+                $_SESSION['name'] = $row['username'];
+                $_SESSION['email'] = $row['email'];
+                $_SESSION['image'] = $row['image'];
+                $_SESSION['full_name'] = $row['first_name'] . ' ' . $row['last_name'];
+                $_SESSION['is_logged_in'] = 1;
+                $_SESSION['role'] = $row['role'];
+
+                logActivity($_SESSION['user_id'], $_SESSION['role'], 'Logged in via Remember Me');
+
+                header('location: ' . $row['role'] . '/index.php');
+                exit();
+            }
+        }
+    }
+}
+?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../dist/assets/images/logos.png" />
+
+    <title>Login | Barangay Management System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #141E30;
+            --secondary-color: #F5F7FA;
+            --accent-color: #AAAAAA;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #E8EEF4 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 40px auto;
+            max-width: 500px;
+        }
+
+        .auth-header {
+            background: var(--primary-color);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .auth-body {
+            padding: 40px;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--accent-color);
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+            border: 2px solid #E8EEF4;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .remember-me {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .social-login {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #E8EEF4;
+        }
+
+        .social-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 2px solid #E8EEF4;
+            background: white;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .auth-footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--secondary-color);
+            
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2><i class="fas fa-sign-in-alt mr-2"></i>Login</h2>
+                <p class="mb-0">Welcome back to barangay management system</p>
+            </div>
+
+            <div class="auth-body">
+            <?php if (!empty($error)): ?>
+                    <div class="alert alert-danger">
+                        <?php foreach ($error as $err): ?>
+                            <p class="mb-0"><i class="fas fa-exclamation-circle mr-2"></i><?php echo $err; ?></p>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+                <form method="POST" action="">
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope mr-2"></i>Email Address</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-lock mr-2"></i>Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" name="password" id="password" required>
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <i class="fas fa-eye password-toggle" onclick="togglePassword()"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="remember-me">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="remember" name="remember">
+                            <label class="custom-control-label" for="remember">Remember me</label>
+                        </div>
+                        <a href="forgot-password.php" class="text-primary">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" name="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login
+                    </button>
+                </form>
+
+
+            </div>
+
+            <div class="auth-footer">
+                Don't have an account? <a href="register.php">Register here</a>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const fieldType = passwordField.type;
+            passwordField.type = fieldType === 'password' ? 'text' : 'password';
+        }
+    </script>
+</body>
+
+</html>

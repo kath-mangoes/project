@@ -1,0 +1,36 @@
+.header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .header img {
+      width: 90px;
+      height: auto;
+    }
+    .header-center {
+      flex: 1;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+    .header-center .office {
+      color: red;
+      font-weight: bold;
+    }
+    /* --- LINE SEPARATOR --- */
+    .line-separator {
+      border-top: 3px solid navy;   /* blue */
+      border-bottom: 3px solid maroon; /* red */
+      height: 3px;
+      margin: 5px 0 0 0;
+    }
+
+
+
+    body {
+      font-family: "Times New Roman", Times, serif;
+      line-height: 1.6;
+      margin: 40px;
+      text-align: justify;
+    }

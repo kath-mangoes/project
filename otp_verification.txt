@@ -1,0 +1,283 @@
+<?php
+session_start();
+include 'connection/config.php';
+include 'functions.php';
+
+if (isset($_POST['verify'])) {
+    $otp = $_POST['otp'];
+
+    if ($otp == $_SESSION['otp']) {
+        $user_data = $_SESSION['user_data'];
+        $role = $user_data['role'];
+        $user_id = $user_data['user_id'];
+
+        // Common user insertion into tbl_user
+        $insertUser = "INSERT INTO tbl_user (user_id, first_name, middle_name, last_name, email, username, password, mobile, address, role, is_logged_in) 
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
+        $stmt = $conn->prepare($insertUser);
+        $stmt->bind_param(
+            "ssssssssss",
+            $user_id,
+            $user_data['first_name'],
+            $user_data['middle_name'],
+            $user_data['last_name'],
+            $user_data['email'],
+            $user_data['username'],
+            $user_data['password'],
+            $user_data['mobile'],
+            $user_data['address'],
+            $role
+        );
+
+        if ($stmt->execute()) {
+            logActivity($user_id, $role, 'Registered in tbl_user');
+
+            // Insert into `tbl_residents` if the role is `resident`
+            if ($role === 'resident') {
+                $insertResident = "INSERT INTO tbl_residents (user_id, first_name, middle_name, last_name, mobile, address) 
+                                   VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($insertResident);
+                $stmt->bind_param(
+                    "ssssss",
+                    $user_id,
+                    $user_data['first_name'],
+                    $user_data['middle_name'],
+                    $user_data['last_name'],
+                    $user_data['mobile'],
+                    $user_data['address']
+                );
+                $stmt->execute();
+                logActivity($user_id, $role, 'Registered in tbl_residents');
+            }
+
+            // Insert into `tbl_brgyofficer` if the role is `barangay_official`
+            elseif ($role === 'barangay_official') {
+                $insertBrgyOfficer = "INSERT INTO tbl_brgyofficer (user_id, first_name, middle_name, last_name, mobile, address) 
+                                      VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($insertBrgyOfficer);
+                $stmt->bind_param(
+                    "ssssss",
+                    $user_id,
+                    $user_data['first_name'],
+                    $user_data['middle_name'],
+                    $user_data['last_name'],
+                    $user_data['mobile'],
+                    $user_data['address']
+                );
+                $stmt->execute();
+                logActivity($user_id, $role, 'Registered in tbl_brgyofficer');
+            }
+
+            // Clear session data after successful registration
+            unset($_SESSION['otp'], $_SESSION['user_data']);
+            header('Location: login.php');
+            exit();
+        } else {
+            $error[] = 'Registration failed. Try again.';
+        }
+    } else {
+        $error[] = 'Invalid OTP.';
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification | Learning Management System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #F5F7FA;
+            --accent-color: #34495E;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #E8EEF4 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 40px auto;
+            max-width: 500px;
+        }
+
+        .auth-header {
+            background: var(--primary-color);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .auth-body {
+            padding: 40px;
+        }
+
+        .otp-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 24px;
+            border: 2px solid #E8EEF4;
+            border-radius: 8px;
+            margin: 0 5px;
+        }
+
+        .otp-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+            outline: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #357ABD;
+            transform: translateY(-1px);
+        }
+
+        .resend-timer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--accent-color);
+        }
+
+        .verification-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .email-sent-to {
+            text-align: center;
+            color: var(--accent-color);
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2><i class="fas fa-shield-alt mr-2"></i>Verify Your Email</h2>
+                <p class="mb-0">Enter the verification code sent to your email</p>
+            </div>
+            
+            <div class="auth-body">
+                <div class="verification-icon">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+
+                <?php if (isset($_SESSION['email'])): ?>
+                    <div class="email-sent-to">
+                        Code sent to: <strong><?php echo htmlspecialchars($_SESSION['email']); ?></strong>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (isset($error)): ?>
+                    <div class="alert alert-danger">
+                        <?php foreach ($error as $err): ?>
+                            <p class="mb-0"><i class="fas fa-exclamation-circle mr-2"></i><?php echo $err; ?></p>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+
+                <form method="POST" action="">
+                    <div class="otp-inputs">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                        <input type="hidden" name="otp" id="otp">
+                    </div>
+
+                    <button type="submit" name="verify" class="btn btn-primary btn-block">
+                        <i class="fas fa-check-circle mr-2"></i>Verify Code
+                    </button>
+                </form>
+
+                <div class="resend-timer text-center mt-4">
+                    <p>Didn't receive the code? <br>
+                    You can resend it in <span id="timer">60</span> seconds</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // OTP input handling
+        const otpInputs = document.querySelectorAll('.otp-input');
+        const otpHidden = document.getElementById('otp');
+
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('keyup', (e) => {
+                const value = e.target.value;
+                
+                if (value.length === 1 && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+
+                // Combine all inputs into hidden field
+                otpHidden.value = Array.from(otpInputs).map(input => input.value).join('');
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+        });
+
+        // Resend timer
+        let timeLeft = 60;
+        const timerElement = document.getElementById('timer');
+        
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                document.querySelector('.resend-timer').innerHTML = 
+                    '<a href="#" class="text-primary" onclick="resendOTP()">Resend verification code</a>';
+            }
+        }, 1000);
+
+        function resendOTP() {
+            // Add your resend OTP logic here
+            // You might want to make an AJAX call to regenerate and resend the OTP
+            location.reload();
+        }
+    </script>
+</body>
+</html>

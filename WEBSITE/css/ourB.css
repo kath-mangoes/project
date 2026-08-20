@@ -1,0 +1,79 @@
+* Hero Section with Slideshow */
+.hero {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+}
+
+    .hero-banner {
+        position: relative;
+        width: 100%;
+        max-height: 300px;
+        overflow: hidden;
+    }
+
+    .banner-image {
+        width: 100%;
+        height: auto;
+    }
+
+    .hero-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        text-align: center;
+        padding: 10px;
+
+    }
+
+    .hero-text h1 {
+        font-size: 40px;
+        text-transform: uppercase;
+    }
+
+    .hero-text p {
+        font-size: 15px;
+    }
+
+    .barangay-council {
+        text-align: center;
+        padding: 60px;
+    }
+    .council-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .council-row {
+        display: flex;
+        justify-content: center;
+        gap: 50px;
+        margin-bottom: 20px;
+    }
+    .council-member {
+        text-align: center;
+        padding-bottom: 40px;
+    }
+    .council-member img {
+        width: 180px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #141E30; /* Optional for style */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+
+    .council-member h3 {
+        margin-top: 10px;
+        color: #11468F;
+    }
+
+    .council-member p {
+        color: #DA1212;
+    }
+
+

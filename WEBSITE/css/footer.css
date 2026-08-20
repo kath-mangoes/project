@@ -1,0 +1,129 @@
+﻿footer {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+}
+
+    footer .container-two {
+        width: auto;
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        background: #141E30;
+    }
+
+    footer .footer-cont {
+        width: 40%;
+    }
+
+    .footer-cont img {
+        width: 200px;
+        margin-left: 80px;
+        margin-top: 50px;
+    }
+
+footer .footer-cont h3 {
+    padding-top: 10px;
+    margin: auto;
+    margin-top: 20px;
+    font-size: 15px;
+    margin-bottom: 5px;
+    text-align: center;
+    position: relative;
+    color: white;
+}
+
+        footer .footer-cont p {
+            width: 300px;
+            margin: auto;
+            padding: 7px;
+            padding-top: 5px;
+            padding-bottom: 50px;
+            position: relative;
+            color:white;
+            text-align: justify;
+        }
+
+footer .footer-cont .govlinks {
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.adlink li {
+    text-decoration: none;
+    list-style: none;
+    width: auto;
+    padding: 7px;
+    position: relative;
+}
+
+.adlink a{
+    color: white;
+    text-decoration: none;
+    padding-left: 90px;
+    font-weight: 500;
+}
+
+.adlink li::before {
+    content: '';
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 170px;
+    top: 100%;
+    width: 0;
+    height: 2px;
+    background: #f18930;
+    transition-duration: .5s;
+}
+
+.adlink li:hover::before {
+    width: 150px;
+}
+
+.govlinks li {
+    width: auto;
+    text-align: center;
+    list-style: none;
+    padding: 7px;
+    position: relative;
+}
+
+    .govlinks li a {
+        text-decoration: none;
+        color: white;
+    }
+
+    .govlinks li::before {
+        content: '';
+        position: absolute;
+        transform: translate(-50%, -50%);
+        left: 50%;
+        top: 100%;
+        width: 0;
+        height: 2px;
+        background: #f18930;
+        transition-duration: .5s;
+    }
+
+    .govlinks li:hover::before {
+        width: 100px;
+    }
+
+.bottom-bar {
+    background: #FCD116;
+    text-align: center;
+    padding: 10px 0;
+}
+
+    .bottom-bar p {
+        color: #343434;
+        margin: 0;
+        font-size: 16px;
+        padding: 7px;
+        color: black;
+    }
+
+    .bottom-bar a{
+        text-decoration: none;
+        color: black;
+    }

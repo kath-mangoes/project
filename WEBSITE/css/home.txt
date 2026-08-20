@@ -1,0 +1,321 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header Styling */
+header {
+    background: #004080;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.barangay-logo {
+    padding-left: 20px;
+    width: auto;
+    height: 90px;
+    top: 10px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    position: relative;
+}
+
+.nav-links li {
+    position: relative;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 10px;
+    display: block;
+}
+
+.nav-links a:hover {
+    color: #ff3e3e;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    background: white;
+    min-width: 200px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown a {
+    color: #004080;
+    padding: 10px;
+    display: block;
+}
+
+.nav-links li:hover .dropdown {
+    display: block;
+}
+
+/* Hero Section with Slideshow */
+.hero {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+}
+
+.slideshow-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slide {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.fade {
+    animation: fadeEffect 1s ease-in-out;
+}
+
+@keyframes fadeEffect {
+    from { opacity: 0.4; }
+    to { opacity: 1; }
+}
+
+/* About Section Styles */
+.row {
+    margin-top: 2%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.brgydt {
+    width: 80%;
+    margin: auto;
+    text-align: left;
+    padding-top: 50px;
+    text-align: justify;
+}
+
+    .brgydt .brgydt-col {
+        flex-basis: 50%;
+        border-radius: 10px;
+        position: relative;
+        margin-bottom: 100px;
+    }
+
+    .brgydt .brgydt-col p{
+        font-size: 20px;
+        margin-top: 20px;
+
+    }
+
+.brgydt h1 {
+    font-size: 30px;
+    font-weight: 500;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', sans-serif;
+}
+
+.brgydt-col img {
+    width: 600px;
+    height: auto;
+    position: absolute;
+    left: 20%;
+    bottom: 100px;
+}
+
+
+
+/* Service Styles */
+.service-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    text-align: center;
+}
+.service-card:hover {
+    transform: translateY(-5px);
+}
+.service-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+
+/* Weather Section Styles */
+.weather-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch; 
+    gap: 20px;
+}
+
+.weather-card {
+    background: #d32f2f; 
+    color: white;
+    padding: 20px;
+    text-align: center;
+    width: 650px;
+    height: 410px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.weather-map iframe {
+    height: 450px; 
+    width: 650px;
+}
+
+.weather-card h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.weather-card .temperature {
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.weather-card .condition {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.weather-card p {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.forecast {
+    margin-top: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.forecast-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.forecast-item:last-child {
+    border-bottom: none;
+}
+
+/* Contact Section Styles */
+#contact {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 50px 20px;
+}
+
+.contact-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1000px;
+    margin: auto;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+/* Contact Form Styling */
+.contact-form {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding-left: 20px;
+    padding-bottom: 20px;
+}
+
+.contact-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.input-group input, input, textarea {
+    width: 90%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.send-btn {
+    background: red;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 95%;
+    font-size: 16px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.send-btn:hover {
+    background: darkred;
+}
+
+/* Contact Info Styling */
+.contact-info {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.contact-info h2 {
+    margin-bottom: 15px;
+}
+
+.contact-info p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.contact-info a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.contact-info a:hover {
+    text-decoration: underline;
+}

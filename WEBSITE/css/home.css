@@ -1,0 +1,330 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Hero Section with Slideshow */
+.hero {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+}
+
+.slideshow-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slide {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.fade {
+    animation: fadeEffect 1s ease-in-out;
+}
+
+@keyframes fadeEffect {
+    from { opacity: 0.4; }
+    to { opacity: 1; }
+}
+
+/* About Section Styles */
+.row {
+    margin-top: 2%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.brgydt {
+    width: 90%;
+    margin: auto;
+    text-align: left;
+    padding-top: 50px;
+    text-align: justify;
+}
+
+    .brgydt .brgydt-col {
+        flex-basis: 50%;
+        border-radius: 10px;
+        position: relative;
+        margin-bottom: 100px;
+    }
+
+    .brgydt .brgydt-col p{
+        font-size: 20px;
+        margin-top: 20px;
+    }
+
+.brgydt h1 {
+    font-size: 30px;
+    font-weight: 500;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', sans-serif;
+}
+
+.brgydt-col img {
+    width: 400px;
+    height: auto;
+    position: absolute;
+    left: 20%;
+    bottom: 100px;
+}
+
+/* Service Styles */
+.services {
+    background: rgba(0, 0, 0, 0.8);;
+    padding: 50px 50px 50px 50px;
+    margin-bottom: 50px;
+}
+
+.services p{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: white;
+    font-size: 20px;
+}
+
+.services h2{
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: white;
+    font-size: 50px;
+}
+
+.service-card {
+    display:inline-block;
+    position: relative;
+    width: 250px; /* Adjust as needed */
+    height: 250px; /* Adjust as needed */
+    border-radius: 10px;
+    overflow: hidden;
+    margin:10px;
+    text-align: center;
+    
+}
+
+.service-card img {
+    width: 300px;
+    height: auto;
+    object-fit: cover;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 100, 0.6); /* Dark blue transparent overlay */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.service-icon {
+    width: 20px; /* Adjust size */
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+}
+
+
+/* Weather Section Styles */
+#weather {
+    padding: 100px;
+}
+
+#weather h2 {
+    color: #041562;
+    font-size: 30px;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#weather  {
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 20px;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Weather Container */
+.weather-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Weather Card */
+.weather-card {
+    background: #b71c1c;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    width: 650px;
+    height: 450px; /* Same height as iframe */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.weather-card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.weather-card #temp{
+    font-size: 50px;
+    font-weight: bold;
+    color: white;
+
+}
+
+/* Weather Map */
+.weather-map iframe {
+    height: 450px;
+    width: 700px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Forecast Section */
+.forecast {
+    margin-top: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.forecast-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    padding: 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.forecast-item:last-child {
+    border-bottom: none;
+}
+
+
+
+
+
+
+/* Contact Section Styles */
+.contact {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 100px;
+}
+
+.contact-container {
+    display: flex;
+    justify-content: space-between;
+    margin: auto;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+/* Contact Form Styling */
+.contact-form {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-bottom: 20px;
+}
+
+.contact-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
+}
+
+.input-group input, input, textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.send-btn {
+    background: red;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.send-btn:hover {
+    background: darkred;
+}
+
+/* Contact Info Styling */
+.contact-info {
+    flex: 1;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    padding-left: 50px;
+}
+
+.contact-info h2 {
+    padding-top: 80px;
+    margin-bottom: 15px;
+    color: #2f79c4;
+}
+
+.contact-info p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.contact-info a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.contact-info a:hover {
+    text-decoration: underline;
+}

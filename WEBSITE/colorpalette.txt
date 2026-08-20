@@ -1,0 +1,7 @@
+#041562 - darkblue
+#11468F - lightblue
+#DA1212 - dark red
+#EEEEEE - white
+rgba(0, 0, 0, 0.2);
+#ff3e3e 
+#004080

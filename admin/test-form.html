@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resident Upload Test</title>
+</head>
+<body>
+    <h2>Test Resident Upload</h2>
+    <form action="add_resident.php" method="POST" enctype="multipart/form-data">
+        <label>First Name:</label><br>
+        <input type="text" name="firstname" value="Test"><br><br>
+
+        <label>Last Name:</label><br>
+        <input type="text" name="lastname" value="User"><br><br>
+
+        <label>Email:</label><br>
+        <input type="email" name="email" value="testuser@example.com"><br><br>
+
+        <label>Upload Image:</label><br>
+        <input type="file" name="image" accept="image/*"><br><br>
+
+        <input type="submit" name="submit" value="Submit">
+        <input type="submit" name="update" value="Update">
+    </form>
+</body>
+</html>
